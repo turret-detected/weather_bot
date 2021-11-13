@@ -1,6 +1,7 @@
 // include the library code:
 #include <LiquidCrystal.h>
 #include <dht_nonblocking.h>
+#include <TimedAction.h>
 #define DHT_SENSOR_TYPE DHT_TYPE_11
 
 static const int DHT_SENSOR_PIN = 2;
@@ -9,11 +10,23 @@ DHT_nonblocking dht_sensor( DHT_SENSOR_PIN, DHT_SENSOR_TYPE );
 // initialize the library with the numbers of the interface pins
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
 
+void get_weather_func() {
+  Serial.println("req_weather");
+}
+
+
+// Timed Actions
+TimedAction getWeatherAction = TimedAction(300000, get_weather_func);
+
+String data;
+
 void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   // Print a message to the LCD.
   lcd.print("Hello, World!");
+
+  Serial.begin(9600);
 }
 
 /*
@@ -55,6 +68,11 @@ static int get_temp_f() {
 
 
 void loop() {
+
+  getWeatherAction.check();
+  if (Serial.available() > 0) {
+    data = Serial.readStringUntil('\n');
+  }
   
 
   float temperature;
@@ -65,12 +83,16 @@ void loop() {
   if( measure_environment( &temperature, &humidity ) == true )
   {
     lcd.setCursor(0, 0);
-    lcd.print( "T = " );
+    lcd.print( "I:" );
     lcd.print( (((temperature * 9.0) / 5.0) + 32.0), 1 );
-    lcd.print( " deg. F");
-    lcd.setCursor(0, 1);
-    lcd.print ("H = " );
+    lcd.print( "F");
+    //lcd.setCursor(0, 1);
+    lcd.print (" H:" );
     lcd.print( humidity, 1 );
     lcd.print( "%" );
+    lcd.setCursor(0, 1);
+    lcd.print( "O:");
+    lcd.print(data);
+    lcd.print("F");
   }
 }
