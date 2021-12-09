@@ -58,8 +58,8 @@ while True:
 			ser.write(str(get_temperature()).encode("utf-8"))
 
 	# Awake poster
-	sleep(0.5)
-	time_count++
+	time.sleep(0.5)
+	time_count = time_count + 1
 	if time_count == 20:
 		time_count = 0
 		ser.write("awake".encode("utf-8"))
