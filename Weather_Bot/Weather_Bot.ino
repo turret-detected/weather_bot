@@ -5,6 +5,7 @@
 #define DHT_SENSOR_TYPE DHT_TYPE_11
 #include <IRremote.h>
 #include <MFRC522.h>
+#include <string.h>
 
 #define LED_GREEN 22
 #define LED_RED 23
@@ -45,12 +46,14 @@ TimedAction getWeatherAction = TimedAction(300000, get_weather_func);
 TimedAction testAction = TimedAction(5000, test_func);
 
 
-String data;
+String data = "null";
 String uid = "";
+String temp;
 bool runOnce = true;
 boolean rfid_state = true;
 boolean lock_state = false;
 int rfid_toggle = 0;
+int awake_time = 0;
 
 void setup() {
   //16x2 LCD
@@ -251,11 +254,30 @@ void loop() {
     irrecv.resume(); // receive the next value
   }
 
-  // READ WEATHER DATA
+  // READ DATA
   getWeatherAction.check();
   if (Serial.available() > 0) {
     data = Serial.readStringUntil('\n');
   }
+
+
+  char input[20];
+  char compare[20];
+  int result;
+
+  strcpy(input, data.c_str());
+  strcpy(compare, "awake");
+  result = strcmp(input, compare);
+  if (strcmp != 0) {
+    temp = data + " F";
+  } else {
+    awake_time = millis();
+  }
+
+ if (awake_time - millis() < -20000) {
+  data = "ERROR";
+ }
+   
 
   // RFID
   if (rfid_state) {
@@ -270,18 +292,21 @@ void loop() {
      true, then a measurement is available. */
   if( measure_environment( &temperature, &humidity ) == true && lcd_status == true )
   {
+    //update internal temp when available
     lcd.setCursor(0, 0);
     lcd.print( "I:" );
     lcd.print( (((temperature * 9.0) / 5.0) + 32.0), 1 );
     lcd.print( "F");
-    //lcd.setCursor(0, 1);
     lcd.print (" H:" );
     lcd.print( humidity, 1 );
     lcd.print( "%" );
+  }
+  if (lcd_status == true) { 
+    //always update this, data updates on its own
     lcd.setCursor(0, 1);
     lcd.print( "O:");
     lcd.print(data);
-    lcd.print("F");
+    //lcd.print("F");
     if (lock_state == true) {
       lcd.print("    LCKD");
     }

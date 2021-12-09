@@ -9,6 +9,7 @@
 import requests
 import serial
 import json
+import time
 
 # ARGUMENTS
 #http://api.openweathermap.org/data/2.5/forecast?id=524901&appid={API key}
@@ -32,6 +33,8 @@ ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 ser.flush()
 print("Weather python script start")
 
+time_count = 0
+
 while True:
 	if ser.in_waiting > 0:
 		line = ser.readline().decode('utf-8').rstrip()
@@ -43,5 +46,8 @@ while True:
 			ser.write(str(get_temperature()).encode("utf-8"))
 			# do the thing
 
-
+	sleep(1)
+	time_count++
+	if time_count == 10:
+		ser.write("alive".encode("utf-8"))
 
