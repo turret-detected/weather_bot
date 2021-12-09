@@ -28,11 +28,24 @@ def get_temperature():
 	return temperature
 
 
-# WAIT FOR REQUEST
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-ser.flush()
+# CONNECT
 print("Weather python script start")
+connected = false
+while !connected:
+	try:
+		ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+		connected = true
+		ser.flush()
 
+	except FileNotFoundError:
+		time.sleep(1)
+		print("Trying again!")
+
+print("Connected!")
+
+
+
+# WAIT FOR REQUEST
 time_count = 0
 
 while True:
@@ -40,14 +53,14 @@ while True:
 		line = ser.readline().decode('utf-8').rstrip()
 		print("Received request")
 		print(line)
-		if line == "req_weather":
-			#print("Received request")
+		if line == "req_weather": # respond to weather request
 			print("Replying")
 			ser.write(str(get_temperature()).encode("utf-8"))
-			# do the thing
 
-	sleep(1)
+	# Awake poster
+	sleep(0.5)
 	time_count++
-	if time_count == 10:
-		ser.write("alive".encode("utf-8"))
-
+	if time_count == 20:
+		time_count = 0
+		ser.write("awake".encode("utf-8"))
+		print("Send Awake Message")

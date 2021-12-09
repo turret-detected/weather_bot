@@ -269,13 +269,13 @@ void loop() {
   strcpy(compare, "awake");
   result = strcmp(input, compare);
   if (strcmp != 0) {
-    temp = data + " F";
+    temp = data + "F";
   } else {
     awake_time = millis();
   }
 
  if (awake_time - millis() < -20000) {
-  data = "ERROR";
+    temp = "ERROR";
  }
    
 
@@ -305,7 +305,7 @@ void loop() {
     //always update this, data updates on its own
     lcd.setCursor(0, 1);
     lcd.print( "O:");
-    lcd.print(data);
+    lcd.print(temp);
     //lcd.print("F");
     if (lock_state == true) {
       lcd.print("    LCKD");
