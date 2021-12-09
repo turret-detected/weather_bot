@@ -30,11 +30,11 @@ def get_temperature():
 
 # CONNECT
 print("Weather python script start")
-connected = false
-while !connected:
+connected = False
+while not connected:
 	try:
 		ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-		connected = true
+		connected = True
 		ser.flush()
 
 	except FileNotFoundError:
