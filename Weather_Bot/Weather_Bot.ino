@@ -14,7 +14,7 @@
 #define IR_RECEIVER 3
 
 // RFID Pins
-#define RST_PIN   2     // Configurable, see typical pin layout above
+#define RST_PIN   5     // Configurable, see typical pin layout above
 #define SS_PIN    53   // Configurable, see typical pin layout above
 
 // Temp sensor
@@ -63,7 +63,7 @@ void setup() {
   lcd.print("Hello, World!");
 
   irrecv.enableIRIn();
-  mfrc522.PCD_Init();
+
 
   pinMode(LED_GREEN, OUTPUT);
   pinMode(LED_RED, OUTPUT);
@@ -72,8 +72,10 @@ void setup() {
   digitalWrite(LED_GREEN, HIGH);
 
   Serial.begin(9600);
+  SPI.begin();  
+  mfrc522.PCD_Init();
 
-  strcpy(awake, "awake");
+  //strcpy(awake, "awake");
   delay(3000);
 }
 
@@ -154,6 +156,7 @@ void rfid_func() {
         
         digitalWrite(LED_RED, HIGH);
         digitalWrite(LED_GREEN, LOW);
+        lock_state = true;
         /*
         digitalWrite(BUZZER_PIN,HIGH);
         delay(2);//wait for 2ms
@@ -321,7 +324,9 @@ void loop() {
     lcd.print( "O:");
     lcd.print(temp);
     if (lock_state == true) {
-      lcd.print("LCKD");
+      lcd.print("    LCKD");
+    } else {
+      lcd.print("        ");
     }
   }
 }
