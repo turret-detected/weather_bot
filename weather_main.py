@@ -47,7 +47,7 @@ while True:
 			# do the thing
 
 	sleep(1)
-	time_count++
+	time_count = time_count + 1
 	if time_count == 10:
 		ser.write("alive".encode("utf-8"))
 
