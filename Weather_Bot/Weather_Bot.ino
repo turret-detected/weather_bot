@@ -46,7 +46,7 @@ TimedAction getWeatherAction = TimedAction(300000, get_weather_func);
 TimedAction testAction = TimedAction(5000, test_func);
 
 
-String data = "null";
+String data = "ERR";
 String uid = "";
 String temp;
 bool runOnce = true;
@@ -54,6 +54,8 @@ boolean rfid_state = true;
 boolean lock_state = false;
 int rfid_toggle = 0;
 int awake_time = 0;
+int result = -100000;
+char awake[5];
 
 void setup() {
   //16x2 LCD
@@ -70,6 +72,9 @@ void setup() {
   digitalWrite(LED_GREEN, HIGH);
 
   Serial.begin(9600);
+
+  strcpy(awake, "awake");
+  delay(3000);
 }
 
 /*
@@ -259,24 +264,33 @@ void loop() {
   if (Serial.available() > 0) {
     data = Serial.readStringUntil('\n');
   }
+  temp = data + "F";
 
-
-  char input[20];
-  char compare[20];
-  int result;
-
+  /*
+  char input[5];
   strcpy(input, data.c_str());
-  strcpy(compare, "awake");
-  result = strcmp(input, compare);
-  if (strcmp != 0) {
-    temp = data + "F";
+
+  
+  result = strcmp(input, awake);
+  lcd.setCursor(0, 0);
+  lcd.print(input);
+  lcd.print("   ");
+  lcd.print(result);
+  lcd.print("                  ");
+  
+  if (result != 0) {
+    temp = data + "F   ";
   } else {
     awake_time = millis();
   }
 
- if (awake_time - millis() < -20000) {
-    temp = "ERROR";
- }
+  if (awake_time - millis() < -50000) {
+    temp = "ERROR    ";
+  } else {
+    
+  }
+  */
+ 
    
 
   // RFID
@@ -290,7 +304,7 @@ void loop() {
 
   /* Measure temperature and humidity.  If the functions returns
      true, then a measurement is available. */
-  if( measure_environment( &temperature, &humidity ) == true && lcd_status == true )
+  if( measure_environment( &temperature, &humidity ) == true && lcd_status == true)
   {
     //update internal temp when available
     lcd.setCursor(0, 0);
@@ -306,9 +320,8 @@ void loop() {
     lcd.setCursor(0, 1);
     lcd.print( "O:");
     lcd.print(temp);
-    //lcd.print("F");
     if (lock_state == true) {
-      lcd.print("    LCKD");
+      lcd.print("LCKD");
     }
   }
 }

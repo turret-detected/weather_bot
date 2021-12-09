@@ -37,7 +37,7 @@ while not connected:
 		connected = True
 		ser.flush()
 
-	except FileNotFoundError:
+	except:
 		time.sleep(1)
 		print("Trying again!")
 
@@ -60,12 +60,12 @@ while True:
 				ser.write(str(get_temperature()).encode("utf-8"))
 
 		# Awake poster
-		time.sleep(0.5)
-		time_count = time_count + 1
-		if time_count == 20:
-			time_count = 0
-			ser.write("awake".encode("utf-8"))
-			print("Sent Awake Message")
+		#time.sleep(0.5)
+		#time_count = time_count + 1
+		#if time_count == 20:
+		#	time_count = 0
+		#	ser.write("awake".encode("utf-8"))
+		#	print("Sent Awake Message")
 	except OSError:
 		print("Lost connection, retrying!")
 		connected = False
@@ -74,7 +74,7 @@ while True:
 				ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 				connected = True
 				ser.flush()
-			except FileNotFoundError:
+			except:
 				time.sleep(1)
 				print("Trying again!")
 		print("Reconnected")
