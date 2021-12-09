@@ -67,14 +67,14 @@ while True:
 			ser.write("awake".encode("utf-8"))
 			print("Sent Awake Message")
 	except OSError:
-        print("Lost connection, retrying!")
-        connected = False
-        while not connected:
-            try:
-                ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
-                connected = True
-                ser.flush()
-            except FileNotFoundError:
-                time.sleep(1)
-                print("Trying again!")
-        print("Reconnected")
+		print("Lost connection, retrying!")
+		connected = False
+		while not connected:
+			try:
+				ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+				connected = True
+				ser.flush()
+			except FileNotFoundError:
+				time.sleep(1)
+				print("Trying again!")
+		print("Reconnected")
