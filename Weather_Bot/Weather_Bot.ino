@@ -185,11 +185,13 @@ TimedAction rfidAction = TimedAction(100, rfid_func);
 // Power button
 boolean lcd_status = true;
 void power_button() {
-  if (lcd_status) {
-    lcd.clear();
-    lcd_status = false;
-  } else {
-    lcd_status = true;
+  if (!lock_state) {
+    if (lcd_status) {
+      lcd.clear();
+      lcd_status = false;
+    } else {
+      lcd_status = true;
+    }
   }
 }
 
@@ -198,6 +200,13 @@ void stop_button() {
   lock_state = true;
   digitalWrite(LED_RED, HIGH);
   digitalWrite(LED_GREEN, LOW);
+}
+
+// Refresh button
+void refresh_button() {
+  if (!lock_state) {
+    Serial.println("req_weather");
+  }
 }
 
 
@@ -215,7 +224,7 @@ void translateIR() // takes action based on IR code received
   case 0xFFE21D: Serial.println("FUNC/STOP"); stop_button(); break;
   case 0xFF629D: Serial.println("VOL+"); break;
   case 0xFF22DD: Serial.println("FAST BACK");    break;
-  case 0xFF02FD: Serial.println("PAUSE");    break;
+  case 0xFF02FD: Serial.println("PAUSE");  refresh_button();  break;
   case 0xFFC23D: Serial.println("FAST FORWARD");   break;
   case 0xFFE01F: Serial.println("DOWN");    break;
   case 0xFFA857: Serial.println("VOL-");    break;
