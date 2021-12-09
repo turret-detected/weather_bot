@@ -12,7 +12,7 @@ import json
 import time
 
 # ARGUMENTS
-#http://api.openweathermap.org/data/2.5/forecast?id=524901&appid={API key}
+# http://api.openweathermap.org/data/2.5/forecast?id=524901&appid={API_key}
 api_url = "http://api.openweathermap.org/data/2.5/forecast?"
 api_loc = "zip=03264,US"
 api_unit = "units=imperial"
@@ -49,18 +49,34 @@ print("Connected!")
 time_count = 0
 
 while True:
-	if ser.in_waiting > 0:
-		line = ser.readline().decode('utf-8').rstrip()
-		print("Received request")
-		print(line)
-		if line == "req_weather": # respond to weather request
-			print("Replying")
-			ser.write(str(get_temperature()).encode("utf-8"))
 
-	# Awake poster
-	time.sleep(0.5)
-	time_count = time_count + 1
-	if time_count == 20:
-		time_count = 0
-		ser.write("awake".encode("utf-8"))
-		print("Sent Awake Message")
+	try: 
+		if ser.in_waiting > 0:
+			line = ser.readline().decode('utf-8').rstrip()
+			print("Received request")
+			print(line)
+			if line == "req_weather": # respond to weather request
+				print("Replying")
+				ser.write(str(get_temperature()).encode("utf-8"))
+
+		# Awake poster
+		time.sleep(0.5)
+		time_count = time_count + 1
+		if time_count == 20:
+			time_count = 0
+			ser.write("awake".encode("utf-8"))
+			print("Sent Awake Message")
+	except OSError:
+		print("Lost connection, retrying!")
+		connected = False
+		while not connected:
+		try:
+			ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+			connected = True
+			ser.flush()
+
+		except FileNotFoundError:
+			time.sleep(1)
+			print("Trying again!")
+
+		print("Connected!")
