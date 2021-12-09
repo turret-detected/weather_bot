@@ -37,7 +37,7 @@ while not connected:
 		connected = True
 		ser.flush()
 
-	except FileNotFoundError:
+	except:
 		time.sleep(1)
 		print("Trying again!")
 
@@ -74,7 +74,7 @@ while True:
 				ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 				connected = True
 				ser.flush()
-			except FileNotFoundError:
+			except:
 				time.sleep(1)
 				print("Trying again!")
 		print("Reconnected")
