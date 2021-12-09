@@ -63,4 +63,4 @@ while True:
 	if time_count == 20:
 		time_count = 0
 		ser.write("awake".encode("utf-8"))
-		print("Send Awake Message")
+		print("Sent Awake Message")
